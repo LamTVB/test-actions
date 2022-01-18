@@ -14,10 +14,10 @@ jobs:
       - uses: khan/pull-request-comment-trigger@master
         id: check
         with:
-          trigger: '#debt'
-      - env:
-          EVENT_CONTEXT: ${{ toJSON(github.event) }}
-          PREVIOUS_RESULT: ${{ toJSON(steps.check) }}
-        run: |
-          echo $EVENT_CONTEXT
+          trigger: '#tech-debt:'
+      - uses: actions/github-script@v5
+        with:
+          script: |
+            console.log(toJSON(github.event));
         if: steps.check.outputs.triggered == 'true'
+
