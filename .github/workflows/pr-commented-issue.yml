@@ -18,6 +18,6 @@ jobs:
       - uses: actions/github-script@v5
         with:
           script: |
-            console.log(toJSON(github.event));
+            console.log(github.event);
         if: steps.check.outputs.triggered == 'true'
 
