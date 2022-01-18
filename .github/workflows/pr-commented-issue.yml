@@ -17,6 +17,7 @@ jobs:
           trigger: '#debt'
       - env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
-          PREVIOUS_RESULT: ${{ toJSON(steps.check.output) }}
+          PREVIOUS_RESULT: ${{ toJSON(steps.check) }}
         run: |
           echo $EVENT_CONTEXT
+          echo $PREVIOUS_RESULT
