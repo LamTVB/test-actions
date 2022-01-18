@@ -18,8 +18,27 @@ jobs:
       - uses: actions/github-script@v5
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
+          OWNER: ${{ github.event.repository.owner.id }}
+          REPOSITORY: ${{ github.event.repository.name }}
+          PR_URL: ${{ github.event.issue.pull_request.html_url }}
+          PR_NUMBER: ${{ github.event.issue.number }}
         with:
           script: |
-            const { COMMENT_BODY } = process.env;
-            console.log(COMMENT_BODY);
+            const { COMMENT_BODY, OWNER, REPOSITORY, PR_URL, PR_NUMBER } = process.env;
+            const issueNumber = COMMENT_BODY.match(/\#[1-9]+/g)[0].substring(1);
+            const issue = await github.rest.issues.get({
+              owner: OWNER,
+              repo: REPOSITORY,
+              issue_number: issueNumber,
+            });
+
+            if (!issue) {
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              issue_number: issueNumber,
+              owner: OWNER,
+              repo: REPOSITORY,
+              body: `This technical debt has been tagged in this [PR#${PR_NUMBER}](#PR_URL)`
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
