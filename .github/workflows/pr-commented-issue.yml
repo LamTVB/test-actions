@@ -40,5 +40,6 @@ jobs:
               issue_number: issueNumber,
               owner: OWNER,
               repo: REPOSITORY,
-              body: `This technical debt has been tagged in this [PR#${PR_NUMBER}](#PR_URL)`
+              body: `This technical debt has been tagged in this [PR#${PR_NUMBER}](#PR_URL)`,
+            });
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
