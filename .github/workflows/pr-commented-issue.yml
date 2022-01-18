@@ -19,4 +19,4 @@ jobs:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
           echo $EVENT_CONTEXT
-        if: steps.check.output.triggered === 'true'
+        if: steps.check.output.triggered == 'true'
