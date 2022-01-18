@@ -17,7 +17,7 @@ jobs:
           trigger: '#tech-debt:'
       - uses: actions/github-script@v5
         env:
-          COMMENT_BODY: github.event.comment.body
+          COMMENT_BODY: ${{ github.event.comment.body }}
         with:
           script: |
             const { COMMENT_BODY } = process.env;
