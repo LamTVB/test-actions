@@ -31,9 +31,14 @@ jobs:
               repo: REPOSITORY,
               issue_number: issueNumber,
             });
-            console.log(issue);
 
             if (!issue) {
+              console.log(`Cannot find issue ${issueNumber}, please tag the right issue.`);
+              return;
+            }
+
+            if (issue.pull_request) {
+              console.log(`Cannot tag another pull request as the technical debt, please tag the right issue.`);
               return;
             }
 
