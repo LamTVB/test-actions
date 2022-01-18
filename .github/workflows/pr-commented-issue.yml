@@ -20,4 +20,4 @@ jobs:
           PREVIOUS_RESULT: ${{ toJSON(steps.check) }}
         run: |
           echo $EVENT_CONTEXT
-          echo $PREVIOUS_RESULT
+        if: steps.check.outputs.triggered == 'true'
