@@ -4,7 +4,6 @@ on:
   issue_comment:
     types:
       - created
-      - edited
 
 jobs:
   pr_commented:
@@ -12,7 +11,12 @@ jobs:
     if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     steps:
+      - uses: khan/pull-request-comment-trigger@master
+        id: check
+        with:
+          trigger: '#debt'
       - env:
-          EVENT_CONTEXT: ${{ toJSON(github) }}
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
           echo $EVENT_CONTEXT
+        if: steps.check.output.triggered === 'true'
