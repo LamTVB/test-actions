@@ -1,4 +1,4 @@
-name: PR technical debts reference
+name: Mention technical debt PR
 
 on:
   issue_comment:
@@ -31,6 +31,7 @@ jobs:
               repo: REPOSITORY,
               issue_number: issueNumber,
             });
+            console.log(issue);
 
             if (!issue) {
               return;
@@ -42,4 +43,5 @@ jobs:
               repo: REPOSITORY,
               body: `This technical debt has been tagged in this [PR#${PR_NUMBER}](${PR_URL})`,
             });
+
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
