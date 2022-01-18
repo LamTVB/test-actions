@@ -37,7 +37,7 @@ jobs:
               return;
             }
 
-            if (issue.pull_request) {
+            if (issue.data.pull_request) {
               console.log(`Cannot tag another pull request as the technical debt, please tag the right issue.`);
               return;
             }
