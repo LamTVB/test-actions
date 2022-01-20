@@ -1,24 +1,32 @@
 name: Mention technical debt PR
 
 on:
+  issue_comment:
   pull_request_review_comment:
     types:
       - created
 
 jobs:
-  pr_commented:
-    name: PR comment
+  fetch_data:
+    name: Fetch data
     runs-on: ubuntu-latest
     steps:
       - env:
-          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+          EVENT_CONTEXT: ${{ toJson(github.event) }}
         run: |
           echo $EVENT_CONTEXT
+  fetch_issue:
+    name: Fetch issue
+    runs-on: ubuntu-latest
+    outputs:
+      ISSUE_NUMBER: ${{ steps.ensure_issue_number.outputs.result }}
+    steps:
       - uses: khan/pull-request-comment-trigger@master
         id: has-tech-debt-tag
         with:
           trigger: '#tech-debt:'
-      - uses: actions/github-script@v5
+      - name: ensure_issue_number
+        uses: actions/github-script@v5
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
           OWNER: ${{ github.event.repository.owner.login }}
@@ -35,7 +43,6 @@ jobs:
               repo: REPOSITORY,
               issue_number: issueNumber,
             });
-            console.log(issue);
 
             if (!issue) {
               console.log(`Cannot find issue ${issueNumber}, please tag the right issue.`);
@@ -47,11 +54,23 @@ jobs:
               return;
             }
 
-            await github.rest.issues.createComment({
-              issue_number: issueNumber,
-              owner: OWNER,
-              repo: REPOSITORY,
-              body: `This technical debt has been tagged in this [PR#${PR_NUMBER}](${PR_URL})`,
-            });
-
+            return issueNumber;
+          result-encoding: string
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
+  create_comment:
+    name: Create comment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: peter-evans/create-or-update-comment@v1.4.5
+        env:
+          PR_URL: ${{ github.event.issue.pull-request.html_url }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        with:
+          issue-number: ${{ jobs.fetch_issue.outputs.ISSUE_NUMBER }}
+          body: |
+            This technical debt has been tagged in the [PR#$PR_NUMBER]($PR_URL)
+            This is a multi-line test comment
+            - With GitHub **Markdown** :sparkles:
+            - Created by [create-or-update-comment][1]
+
+            [1]: https://github.com/peter-evans/create-or-update-comment
