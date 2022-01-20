@@ -28,11 +28,11 @@ jobs:
             const techDebtTag = COMMENT_BODY.match(/\#tech-debt: *#[1-9]+/g)[0];
             const issueNumber = techDebtTag.match(/\#[1-9]+/g)[0].substring(1);
             const issue = await github.rest.issues.get({
-              owner: 'unitoio',
-              repo: 'connectors',
-              issue_number: '3990',
+              owner: OWNER,
+              repo: REPOSITORY,
+              issue_number: issueNumber,
             });
-            console.dir(issue, { depth: null });
+            console.log(issue);
 
             if (!issue) {
               console.log(`Cannot find issue ${issueNumber}, please tag the right issue.`);
