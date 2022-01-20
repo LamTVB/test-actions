@@ -1,5 +1,6 @@
 name: Mention technical debt PR
 
+"Some test"
 on:
   pull_request_review_comment:
     types:
