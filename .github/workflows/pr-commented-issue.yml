@@ -17,9 +17,10 @@ jobs:
           echo $EVENT_CONTEXT
   fetch_issue:
     name: Fetch issue
+    if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     outputs:
-      ISSUE_NUMBER: ${{ steps.ensure_issue_number.outputs.result }}
+      issueNumber: ${{ steps.ensure_issue_number.outputs.result }}
     steps:
       - uses: khan/pull-request-comment-trigger@master
         id: has-tech-debt-tag
@@ -61,12 +62,16 @@ jobs:
     name: Create comment
     runs-on: ubuntu-latest
     steps:
+      - env:
+          EVENT_CONTEXT: ${{ toJson(needs.jobs) }}
+        run: |
+          echo $EVENT_CONTEXT
       - uses: peter-evans/create-or-update-comment@v1.4.5
         env:
           PR_URL: ${{ github.event.issue.pull-request.html_url }}
           PR_NUMBER: ${{ github.event.issue.number }}
         with:
-          issue-number: ${{ needs.jobs.fetch_issue.outputs.ISSUE_NUMBER }}
+          issue-number: ${{ needs.jobs.fetch_issue.outputs.issueNumber }}
           body: |
             This technical debt has been tagged in the [PR#$PR_NUMBER]($PR_URL)
             This is a multi-line test comment
