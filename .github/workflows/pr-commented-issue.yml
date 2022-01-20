@@ -64,7 +64,7 @@ jobs:
     needs: fetch_issue
     steps:
       - env:
-          EVENT_CONTEXT: ${{ toJson(needs.jobs) }}
+          EVENT_CONTEXT: ${{ toJson(needs.fetch_issue) }}
         run: |
           echo $EVENT_CONTEXT
       - uses: peter-evans/create-or-update-comment@v1.4.5
@@ -72,7 +72,7 @@ jobs:
           PR_URL: ${{ github.event.issue.pull-request.html_url }}
           PR_NUMBER: ${{ github.event.issue.number }}
         with:
-          issue-number: ${{ needs.jobs.fetch_issue.outputs.issueNumber }}
+          issue-number: ${{ needs.fetch_issue.outputs.issueNumber }}
           body: |
             This technical debt has been tagged in the [PR#$PR_NUMBER]($PR_URL)
             This is a multi-line test comment
