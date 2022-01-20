@@ -4,6 +4,9 @@ on:
   issue_comment:
     types:
       - created
+  pull_request_review_comment:
+    types:
+      - created
 
 jobs:
   pr_commented:
@@ -11,6 +14,10 @@ jobs:
     if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     steps:
+      - env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: |
+          echo $EVENT_CONTEXT
       - uses: khan/pull-request-comment-trigger@master
         id: has-tech-debt-tag
         with:
