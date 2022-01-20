@@ -1,7 +1,6 @@
 name: Mention technical debt PR
 
 on:
-  issue_comment:
   pull_request_review_comment:
     types:
       - created
