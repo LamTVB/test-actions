@@ -58,6 +58,8 @@ jobs:
             return issueNumber;
           result-encoding: string
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
+      - run: |
+          echo ${{ steps.ensure_issue_number.outputs.result }}
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
