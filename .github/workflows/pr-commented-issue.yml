@@ -7,35 +7,46 @@ on:
       - created
 
 jobs:
-  fetch_data:
+  fetch_data_from_issue:
+    if: $ {{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    outputs:
+      COMMENT_BODY: ${{ steps.set-output.outputs.COMMENT_BODY }}
+      OWNER: ${{ steps.set-output.outputs.OWNER }}
+      PR_NUMBER: ${{ steps.set-output.outputs.PR_NUMBER }}
+      PR_URL: ${{ steps.set-output.outputs.PR_URL }}
+      REPOSITORY: ${{ steps.set-output.outputs.REPOSITORY }}
+    steps:
+      - id: set-output
+        name: Set output
+        run: |
+          echo "::set-output name=COMMENT_BODY::${{ github.event.comment.body }}"
+          echo "::set-output name=OWNER::${{ github.event.repository.owner.login }}"
+          echo "::set-output name=PR_NUMBER::${{ github.event.issue.number }}"
+          echo "::set-output name=PR_URL::${{ github.event.issue.pull_request.html_url }}"
+          echo "::set-output name=REPOSITORY::${{ github.event.repository.name }}"
+
+  has_triggered:
     name: Fetch data
     runs-on: ubuntu-latest
+    needs: fetch_data_from_issue
+    outputs:
+      triggered: ${{ steps.detect-trigger.outputs.result }}
     steps:
       - env:
-          EVENT_CONTEXT: ${{ toJson(github.event) }}
+          EVENT_CONTEXT: ${{ toJson(needs.fetch_data_from_issue) }}
         run: |
           echo $EVENT_CONTEXT
-  fetch_issue:
-    name: Fetch issue
-    if: ${{ github.event.issue.pull_request }}
+  fetch_issue_number:
+    name: Fetch issue number from comment
     runs-on: ubuntu-latest
     outputs:
       issue-number: ${{ steps.ensure-issue-number.outputs.result }}
     steps:
-      - uses: khan/pull-request-comment-trigger@master
-        id: has-tech-debt-tag
-        with:
-          trigger: '#tech-debt:'
-
       - id: ensure-issue-number
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
         uses: actions/github-script@v5
         env:
-          COMMENT_BODY: ${{ github.event.comment.body }}
-          OWNER: ${{ github.event.repository.owner.login }}
-          REPOSITORY: ${{ github.event.repository.name }}
-          PR_URL: ${{ github.event.issue.pull_request.html_url }}
-          PR_NUMBER: ${{ github.event.issue.number }}
         with:
           result-encoding: string
           script: |
