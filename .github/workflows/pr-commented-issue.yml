@@ -60,10 +60,13 @@ jobs:
             return issueNumber;
           result-encoding: string
 
-      - env:
-          EVENT_CONTEXT: ${{ toJson(steps.ensure-issue-number) }}
+      - needs: ensure-issue-number
+        env:
+          EVENT_CONTEXT: ${{ toJson(needs) }}
+          EVENT_CONTEXT2: ${{ toJson(steps) }}
         run: |
           echo $EVENT_CONTEXT
+          echo $EVENT_CONTEXT2
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
