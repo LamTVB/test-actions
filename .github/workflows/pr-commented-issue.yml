@@ -75,4 +75,4 @@ jobs:
         with:
           issue-number: ${{ needs.fetch_issue.outputs.issue-number }}
           body: |
-            This technical debt has been tagged in the [PR#${{PR_NUMBER}}](${{PR_URL}})
+            This technical debt has been tagged in the [PR#$PR_NUMBER]($PR_URL)
