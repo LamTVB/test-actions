@@ -7,7 +7,8 @@ on:
       - created
 
 jobs:
-  fetch_data_from_issue:
+  fetch_data:
+    name: Fetch data from event
     runs-on: ubuntu-latest
     outputs:
       COMMENT_BODY: ${{ steps.set-output.outputs.COMMENT_BODY }}
@@ -15,10 +16,12 @@ jobs:
       PR_NUMBER: ${{ steps.set-output.outputs.PR_NUMBER }}
       PR_URL: ${{ steps.set-output.outputs.PR_URL }}
       REPOSITORY: ${{ steps.set-output.outputs.REPOSITORY }}
+      EVENT_CONTEXT: ${{ toJson(github.event) }}
     steps:
       - id: set-output
         name: Set output
         run: |
+          echo $EVENT_CONTEXT
           echo "::set-output name=COMMENT_BODY::${{ github.event.comment.body }}"
           echo "::set-output name=OWNER::${{ github.event.repository.owner.login }}"
           if [[ -n "${{ github.event.issue.pull_request }}" ]]; then
@@ -31,21 +34,42 @@ jobs:
 
           echo "::set-output name=REPOSITORY::${{ github.event.repository.name }}"
   has_triggered:
-    name: Fetch data
+    name: Has tag in comment body
     runs-on: ubuntu-latest
     needs: fetch_data_from_issue
     outputs:
       triggered: ${{ steps.detect-trigger.outputs.result }}
     steps:
       - env:
-          EVENT_CONTEXT: ${{ toJson(needs.fetch_data_from_issue) }}
-        run: |
-          echo $EVENT_CONTEXT
+          COMMENT_BODY: ${{ needs.fetch_data_from_issue.outputs.COMMENT_BODY }}
+        with:
+          result-encoding: string
+          scripts: |
+            const { COMMENT_BODY } = process.env;
+            const hasTagInBody = COMMENT_BODY.includes('#tech-debt:');
+            if (hasTagInBody) {
+              return 'true';
+            }
+
+            console.log('Comment body must have "#tech-debt:" to be able to tag an issue');
+            return;
+
   fetch_issue_number:
     name: Fetch issue number from comment
     runs-on: ubuntu-latest
+    needs:
+      - has_triggered
+      - fetch_data
+
+    if: needs.has_triggered.outputs.triggered == 'true'
     outputs:
       issue-number: ${{ steps.ensure-issue-number.outputs.result }}
+    env:
+      COMMENT_BODY: ${{ needs.fetch_data_from_issue.outputs.COMMENT_BODY }}
+      OWNER: ${{ needs.fetch_data_from_issue.outputs.OWNER }}
+      PR_NUMBER: ${{ needs.fetch_data_from_issue.outputs.PR_NUMBER }}
+      PR_URL: ${{ needs.fetch_data_from_issue.outputs.PR_URL }}
+      REPOSITORY: ${{ needs.fetch_data_from_issue.outputs.REPOSITORY }}
     steps:
       - id: ensure-issue-number
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
@@ -73,6 +97,7 @@ jobs:
             }
 
             return issueNumber;
+
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
