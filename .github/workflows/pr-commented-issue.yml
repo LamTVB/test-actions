@@ -58,6 +58,10 @@ jobs:
 
             return issueNumber;
           result-encoding: string
+        - name: check-issue-number
+          env:
+            ENV_CONTEXT: ${{ toJson(steps.ensure-issue-number) }}
+          run: echo $ENV_CONTEXT
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
