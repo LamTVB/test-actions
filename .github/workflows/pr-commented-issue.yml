@@ -37,6 +37,7 @@ jobs:
           PR_URL: ${{ github.event.issue.pull_request.html_url }}
           PR_NUMBER: ${{ github.event.issue.number }}
         with:
+          result-encoding: string
           script: |
             const { COMMENT_BODY, OWNER, REPOSITORY, PR_URL, PR_NUMBER } = process.env;
             const techDebtTag = COMMENT_BODY.match(/\#tech-debt: *#[1-9]+/g)[0];
@@ -56,14 +57,11 @@ jobs:
               console.log(`Cannot tag another pull request as the technical debt, please tag the right issue.`);
               return;
             }
+            console.log(issueNumber);
 
             return issueNumber;
-          result-encoding: string
 
-      - env:
-          EVENT_CONTEXT: ${{ toJson(steps) }}
-        run: |
-          echo $EVENT_CONTEXT
+      - run: echo "${{steps.ensure-issue-number.outputs.result}}"
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
