@@ -68,11 +68,19 @@ jobs:
           EVENT_CONTEXT: ${{ toJson(github.event) }}
         run: |
           echo $EVENT_CONTEXT
-      - uses: peter-evans/create-or-update-comment@v1.4.5
+      - uses: actions/github-script@v5
         env:
-          PR_URL: ${{ github.event.issue.pull-request.html_url }}
+          OWNER: ${{ github.event.repository.owner.login }}
+          REPOSITORY: ${{ github.event.repository.name }}
+          PR_URL: ${{ github.event.issue.pull_request.html_url }}
           PR_NUMBER: ${{ github.event.issue.number }}
         with:
-          issue-number: ${{ needs.fetch_issue.outputs.issue-number }}
-          body: |
-            This technical debt has been tagged in the [PR#\${{ PR_NUMBER }} ](\${{ PR_URL }})
+          script: |
+            const { OWNER, REPOSITORY, PR_URL, PR_NUMBER } = process.env;
+
+            github.rest.issues.createComment({
+              issue_number: ${{ needs.fetch_issue.outputs.issue-number }},
+              owner: OWNER,
+              repo: REPOSITORY,
+              body: `This technical debt has been tagged in the [PR#${PR_NUMBER} ](\${PR_URL}).`
+            });
