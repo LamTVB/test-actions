@@ -72,7 +72,7 @@ jobs:
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
-    needs: fetch_issue
+    needs: fetch_issue_number
     steps:
       - env:
           EVENT_CONTEXT: ${{ toJson(github.event) }}
