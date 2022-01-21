@@ -28,7 +28,7 @@ jobs:
             echo "::set-output name=PR_URL::${{ github.event.issue.pull_request.html_url }}"
           else
             echo "::set-output name=PR_NUMBER::${{ github.event.pull_request.number }}"
-            echo "::set-output name=PR_URL::${{ github.event.pull_request.html_url }}"
+            echo "::set-output name=PR_URL::${{ github.event.comment._links.html.href }}"
           fi
 
           echo "::set-output name=REPOSITORY::${{ github.event.repository.name }}"
@@ -51,7 +51,7 @@ jobs:
           result-encoding: string
           script: |
             const { COMMENT_BODY } = process.env;
-            const hasTagInBody = COMMENT_BODY.includes('#tech-debt:');
+            const hasTagInBody = COMMENT_BODY.includes(/#tech-debt:/g);
             if (hasTagInBody) {
               return 'true';
             }
