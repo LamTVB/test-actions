@@ -66,7 +66,6 @@ jobs:
       - has_triggered
       - fetch_data
 
-    if: needs.has_triggered.outputs.triggered == 'true'
     outputs:
       issue-number: ${{ steps.ensure-issue-number.outputs.result }}
     env:
@@ -76,6 +75,10 @@ jobs:
       PR_URL: ${{ needs.fetch_data_from_issue.outputs.PR_URL }}
       REPOSITORY: ${{ needs.fetch_data_from_issue.outputs.REPOSITORY }}
     steps:
+      - env:
+          EVENT_CONTEXT: ${{ toJson(needs.has_triggered) }}
+        run: |
+          echo $EVENT_CONTEXT
       - id: ensure-issue-number
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
         uses: actions/github-script@v5
