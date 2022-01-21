@@ -40,8 +40,9 @@ jobs:
     outputs:
       triggered: ${{ steps.detect-trigger.outputs.result }}
     steps:
-      - env:
-          COMMENT_BODY: ${{ needs.fetch_data_from_issue.outputs.COMMENT_BODY }}
+      - id: detect-trigger
+        env:
+          COMMENT_BODY: ${{ needs.fetch_data.outputs.COMMENT_BODY }}
         uses: actions/github-script@v5
         with:
           result-encoding: string
@@ -62,14 +63,15 @@ jobs:
       - has_triggered
       - fetch_data
 
+    if: needs.has_triggered.outputs.triggered == 'true'
     outputs:
       issue-number: ${{ steps.ensure-issue-number.outputs.result }}
     env:
-      COMMENT_BODY: ${{ needs.fetch_data_from_issue.outputs.COMMENT_BODY }}
-      OWNER: ${{ needs.fetch_data_from_issue.outputs.OWNER }}
-      PR_NUMBER: ${{ needs.fetch_data_from_issue.outputs.PR_NUMBER }}
-      PR_URL: ${{ needs.fetch_data_from_issue.outputs.PR_URL }}
-      REPOSITORY: ${{ needs.fetch_data_from_issue.outputs.REPOSITORY }}
+      COMMENT_BODY: ${{ needs.fetch_data.outputs.COMMENT_BODY }}
+      OWNER: ${{ needs.fetch_data.outputs.OWNER }}
+      PR_NUMBER: ${{ needs.fetch_data.outputs.PR_NUMBER }}
+      PR_URL: ${{ needs.fetch_data.outputs.PR_URL }}
+      REPOSITORY: ${{ needs.fetch_data.outputs.REPOSITORY }}
     steps:
       - env:
           EVENT_CONTEXT: ${{ toJson(needs.has_triggered) }}
@@ -105,25 +107,16 @@ jobs:
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
-    needs: fetch_issue_number
+    needs:
+      - fetch_data
+      - fetch_issue_number
     steps:
-      - env:
-          EVENT_CONTEXT: ${{ toJson(github.event) }}
-        run: |
-          echo $EVENT_CONTEXT
       - uses: actions/github-script@v5
-        env:
-          OWNER: ${{ github.event.repository.owner.login }}
-          REPOSITORY: ${{ github.event.repository.name }}
-          PR_URL: ${{ github.event.issue.pull_request.html_url }}
-          PR_NUMBER: ${{ github.event.issue.number }}
         with:
           script: |
-            const { OWNER, REPOSITORY, PR_URL, PR_NUMBER } = process.env;
-
             github.rest.issues.createComment({
               issue_number: ${{ needs.fetch_issue.outputs.issue-number }},
-              owner: OWNER,
-              repo: REPOSITORY,
-              body: `This technical debt has been tagged in the [PR#${PR_NUMBER} ](\${PR_URL}).`
+              owner: ${{ needs.fetch_data.outputs.OWNER }},
+              repo: ${{ needs.fetch_data.outputs.REPOSITORY }},
+              body: `This technical debt has been tagged in the [PR#${PR_NUMBER} ](${PR_URL}).`
             });
