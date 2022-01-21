@@ -78,7 +78,6 @@ jobs:
         run: |
           echo $EVENT_CONTEXT
       - id: ensure-issue-number
-        if: steps.has-tech-debt-tag.outputs.triggered == 'true'
         uses: actions/github-script@v5
         with:
           result-encoding: string
