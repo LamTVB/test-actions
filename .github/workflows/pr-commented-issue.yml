@@ -42,6 +42,7 @@ jobs:
     steps:
       - env:
           COMMENT_BODY: ${{ needs.fetch_data_from_issue.outputs.COMMENT_BODY }}
+        uses: actions/github-script@v5
         with:
           result-encoding: string
           scripts: |
