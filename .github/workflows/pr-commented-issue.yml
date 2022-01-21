@@ -117,5 +117,5 @@ jobs:
               issue_number: '${{ needs.fetch_issue_number.outputs.issue-number }}',
               owner: '${{ needs.fetch_data.outputs.OWNER }}',
               repo: '${{ needs.fetch_data.outputs.REPOSITORY }}',
-              body: `This technical debt has been tagged in the [PR#${PR_NUMBER}](${PR_URL}).`
+              body: 'This technical debt has been tagged in the [PR#${{ needs.fetch_data.outputs.PR_NUMBER }}](${{ needs.fetch_data.outputs.PR_URL }}).'
             });
