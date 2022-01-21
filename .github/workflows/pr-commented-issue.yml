@@ -27,7 +27,7 @@ jobs:
         with:
           trigger: '#tech-debt:'
 
-      - name: ensure-issue-number
+      - id: ensure-issue-number
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
         uses: actions/github-script@v5
         env:
