@@ -16,7 +16,6 @@ jobs:
       PR_NUMBER: ${{ steps.set-output.outputs.PR_NUMBER }}
       PR_URL: ${{ steps.set-output.outputs.PR_URL }}
       REPOSITORY: ${{ steps.set-output.outputs.REPOSITORY }}
-      EVENT_CONTEXT: ${{ toJson(github.event) }}
     steps:
       - id: set-output
         name: Set output
@@ -33,6 +32,11 @@ jobs:
           fi
 
           echo "::set-output name=REPOSITORY::${{ github.event.repository.name }}"
+      - env:
+          EVENT_CONTEXT: ${{ toJson(github.event) }}
+        run: |
+          echo $EVENT_CONTEXT
+
   has_triggered:
     name: Has tag in comment body
     runs-on: ubuntu-latest
@@ -45,7 +49,7 @@ jobs:
         uses: actions/github-script@v5
         with:
           result-encoding: string
-          scripts: |
+          script: |
             const { COMMENT_BODY } = process.env;
             const hasTagInBody = COMMENT_BODY.includes('#tech-debt:');
             if (hasTagInBody) {
