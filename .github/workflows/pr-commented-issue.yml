@@ -8,7 +8,7 @@ on:
 
 jobs:
   fetch_data_from_issue:
-    if: $ {{ github.event.issue.pull_request }}
+    if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     outputs:
       COMMENT_BODY: ${{ steps.set-output.outputs.COMMENT_BODY }}
