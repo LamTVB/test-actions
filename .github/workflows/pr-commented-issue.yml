@@ -36,7 +36,7 @@ jobs:
   has_triggered:
     name: Has tag in comment body
     runs-on: ubuntu-latest
-    needs: fetch_data_from_issue
+    needs: fetch_data
     outputs:
       triggered: ${{ steps.detect-trigger.outputs.result }}
     steps:
