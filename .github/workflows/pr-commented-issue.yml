@@ -32,10 +32,6 @@ jobs:
           fi
 
           echo "::set-output name=REPOSITORY::${{ github.event.repository.name }}"
-      - env:
-          EVENT_CONTEXT: ${{ toJson(github.event) }}
-        run: |
-          echo $EVENT_CONTEXT
 
   has_triggered:
     name: Has tag in comment body
@@ -51,7 +47,7 @@ jobs:
           result-encoding: string
           script: |
             const { COMMENT_BODY } = process.env;
-            const hasTagInBody = COMMENT_BODY.includes(/#tech-debt:/g);
+            const hasTagInBody = COMMENT_BODY.includes('#tech-debt:');
             if (hasTagInBody) {
               return 'true';
             }
