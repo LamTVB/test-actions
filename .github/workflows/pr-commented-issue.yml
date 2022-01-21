@@ -20,7 +20,7 @@ jobs:
     if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     outputs:
-      issue-number: ${{ steps.ensure-issue-number.outputs.result }}
+      issue-number: steps.ensure-issue-number.outputs.result
     steps:
       - uses: khan/pull-request-comment-trigger@master
         id: has-tech-debt-tag
@@ -58,8 +58,6 @@ jobs:
 
             return issueNumber;
           result-encoding: string
-      - run: |
-          echo ${{ steps.ensure-issue-number }}
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
