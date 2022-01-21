@@ -20,13 +20,14 @@ jobs:
     if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     outputs:
-      issueNumber: ${{ steps.ensure_issue_number.outputs.result }}
+      issue-number: ${{ steps.ensure_issue_number.outputs.result }}
     steps:
       - uses: khan/pull-request-comment-trigger@master
         id: has-tech-debt-tag
         with:
           trigger: '#tech-debt:'
-      - name: ensure_issue_number
+      - name: ensure-issue-number
+        if: steps.has-tech-debt-tag.outputs.triggered == 'true'
         uses: actions/github-script@v5
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
@@ -57,9 +58,8 @@ jobs:
 
             return issueNumber;
           result-encoding: string
-        if: steps.has-tech-debt-tag.outputs.triggered == 'true'
       - run: |
-          echo ${{ steps.ensure_issue_number.outputs.result }}
+          echo ${{ steps.ensure-issue-number.outputs.result }}
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
@@ -74,7 +74,7 @@ jobs:
           PR_URL: ${{ github.event.issue.pull-request.html_url }}
           PR_NUMBER: ${{ github.event.issue.number }}
         with:
-          issue-number: ${{ needs.fetch_issue.outputs.issueNumber }}
+          issue-number: ${{ needs.fetch_issue.outputs.issue-number }}
           body: |
             This technical debt has been tagged in the [PR#$PR_NUMBER]($PR_URL)
             This is a multi-line test comment
