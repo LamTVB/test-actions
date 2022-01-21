@@ -57,11 +57,9 @@ jobs:
               console.log(`Cannot tag another pull request as the technical debt, please tag the right issue.`);
               return;
             }
-            console.log(issueNumber);
 
             return issueNumber;
-
-      - run: echo "${{steps.ensure-issue-number.outputs.result}}"
+      - run: echo "${{steps.ensure-issue-number.outputs}}"
   create_comment:
     name: Create comment
     runs-on: ubuntu-latest
