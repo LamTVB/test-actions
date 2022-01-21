@@ -46,7 +46,6 @@ jobs:
       - id: ensure-issue-number
         if: steps.has-tech-debt-tag.outputs.triggered == 'true'
         uses: actions/github-script@v5
-        env:
         with:
           result-encoding: string
           script: |
