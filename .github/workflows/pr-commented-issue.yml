@@ -114,7 +114,7 @@ jobs:
         with:
           script: |
             github.rest.issues.createComment({
-              issue_number: ${{ needs.fetch_issue.outputs.issue-number }},
+              issue_number: ${{ needs.fetch_issue_number.outputs.issue-number }},
               owner: ${{ needs.fetch_data.outputs.OWNER }},
               repo: ${{ needs.fetch_data.outputs.REPOSITORY }},
               body: `This technical debt has been tagged in the [PR#${PR_NUMBER} ](${PR_URL}).`
