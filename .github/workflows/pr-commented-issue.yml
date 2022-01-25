@@ -83,8 +83,8 @@ jobs:
           result-encoding: string
           script: |
             const { COMMENT_BODY, OWNER, REPOSITORY, PR_URL, PR_NUMBER } = process.env;
-            const techDebtTag = COMMENT_BODY.match(/\#tech-debt: *#[1-9]+/g)[0];
-            const issueNumber = techDebtTag.match(/\#[1-9]+/g)[0].substring(1);
+            const techDebtTag = COMMENT_BODY.match(/#tech-debt: *#[0-9]+/g)[0];
+            const issueNumber = techDebtTag.match(/#[0-9]+/g)[0].substring(1);
             const issue = await github.rest.issues.get({
               owner: OWNER,
               repo: REPOSITORY,
