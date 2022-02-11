@@ -1,4 +1,18 @@
-name: Mention technical debt PR
+# Github script doc
+# https://github.com/actions/github-script
+#
+# issue_comment event
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#issue_comment
+#
+# pull_request_review_comment
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_review_comment
+#
+# Setting an output parameter
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
+#
+# Defining ouputs for jobs
+# https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+name: 🔧 Mention technical debt PR
 
 on:
   issue_comment:
@@ -35,7 +49,7 @@ jobs:
 
   has_triggered:
     name: Has tag in comment body
-    runs-on: node@current-alpine
+    runs-on: ubuntu-latest
     needs: fetch_data
     outputs:
       triggered: ${{ steps.detect-trigger.outputs.result }}
@@ -48,17 +62,19 @@ jobs:
           result-encoding: string
           script: |
             const { COMMENT_BODY } = process.env;
-            const hasTagInBody = COMMENT_BODY.includes('#tech-debt:');
-            if (hasTagInBody) {
-              return 'true';
+            const keywords = ['#tech-debt', '#technical-debt', '$tech-debt', '$technical-debt'];
+            for (const keyword of keywords) {
+              if (COMMENT_BODY.includes(keyword)) {
+                return 'true';
+              }
             }
 
-            console.log('Comment body must have "#tech-debt:" to be able to tag an issue');
+            console.log(`Comment body must have at least one of these keywords: ${keywords.join()} to be able to tag an issue`);
             return;
 
   fetch_issue_number:
     name: Fetch issue number from comment
-    runs-on: node@current-alpine
+    runs-on: ubuntu-latest
     needs:
       - has_triggered
       - fetch_data
@@ -83,7 +99,13 @@ jobs:
           result-encoding: string
           script: |
             const { COMMENT_BODY, OWNER, REPOSITORY, PR_URL, PR_NUMBER } = process.env;
-            const techDebtTag = COMMENT_BODY.match(/\#tech-debt: *#[0-9]+/g)[0];
+            const keywords = ['#tech-debt', '#technical-debt', '$tech-debt', '$technical-debt'];
+            const techDebtTagUsed = keywords.find(keyword => {
+              const regex = new RegExp(keyword + ': *#[0-9]+', g);
+              return !!COMMENT_BODY.match(regex);
+            });
+            const regexp = new RegExp(techDebtTagUsed + ': *#[0-9]+', g);
+            const techDebtTag = COMMENT_BODY.match(regexp)[0];
             const issueNumber = techDebtTag.match(/\#[0-9]+/g)[0].substring(1);
             const issue = await github.rest.issues.get({
               owner: OWNER,
@@ -105,7 +127,7 @@ jobs:
 
   create_comment:
     name: Create comment
-    runs-on: node@current-alpine
+    runs-on: ubuntu-latest
     needs:
       - fetch_data
       - fetch_issue_number
