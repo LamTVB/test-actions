@@ -62,7 +62,7 @@ jobs:
           result-encoding: string
           script: |
             const { COMMENT_BODY } = process.env;
-            const keywords = ['\#tech\-debt', '\#technical\-debt', '\$tech\-debt', '\$technical\-debt'];
+            const keywords = ['\\#tech\-debt', '\\#technical\\-debt', '\\$tech\\-debt', '\\$technical\\-debt'];
             for (const keyword of keywords) {
               const regex = new RegExp(`${keyword}: *#[0-9]+'`, 'g');
               const match = regex.test(COMMENT_BODY);
@@ -102,7 +102,7 @@ jobs:
           result-encoding: string
           script: |
             const { COMMENT_BODY, OWNER, REPOSITORY, PR_URL, PR_NUMBER } = process.env;
-            const keywords = ['\#tech\-debt', '\#technical\-debt', '\$tech\-debt', '\$technical\-debt'];
+            const keywords = ['\\#tech\-debt', '\\#technical\\-debt', '\\$tech\\-debt', '\\$technical\\-debt'];
             const techDebtTagUsed = keywords.find(keyword => {
               const regex = new RegExp(`${keyword}: *#[0-9]+'`, 'g');
               return !!COMMENT_BODY.match(regex);
