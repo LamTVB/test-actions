@@ -23,7 +23,7 @@ on:
 jobs:
   fetch_data:
     name: Fetch data from event
-    runs-on: node@current-alpine
+    runs-on: ubuntu-latest
     outputs:
       COMMENT_BODY: ${{ steps.set-output.outputs.COMMENT_BODY }}
       OWNER: ${{ steps.set-output.outputs.OWNER }}
