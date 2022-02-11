@@ -106,7 +106,7 @@ jobs:
               return regex.test(COMMENT_BODY);
             });
 
-            const regexp = new RegExp(`${keyword}: *\#[0-9]+`, 'g');
+            const regexp = new RegExp(`${techDebtTagUsed}: *\#[0-9]+`, 'g');
             const techDebtTag = COMMENT_BODY.match(regexp)[0];
             const issueNumber = techDebtTag.match(/\#[0-9]+/g)[0].substring(1);
             const issue = await github.rest.issues.get({
