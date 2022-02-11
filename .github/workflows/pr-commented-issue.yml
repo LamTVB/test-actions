@@ -64,7 +64,7 @@ jobs:
             const { COMMENT_BODY } = process.env;
             const keywords = ['#tech-debt', '#technical-debt', '$tech-debt', '$technical-debt'];
             const techDebtTagUsed = keywords.find(keyword => {
-              const regex = new RegExp(`${keyword}: *#[0-9]+', 'g');
+              const regex = new RegExp(`${keyword}: *#[0-9]+'`, 'g');
               return !!COMMENT_BODY.match(regex);
             });
 
@@ -104,7 +104,7 @@ jobs:
             const { COMMENT_BODY, OWNER, REPOSITORY, PR_URL, PR_NUMBER } = process.env;
             const keywords = ['#tech-debt', '#technical-debt', '$tech-debt', '$technical-debt'];
             const techDebtTagUsed = keywords.find(keyword => {
-              const regex = new RegExp(`${keyword}: *#[0-9]+', 'g');
+              const regex = new RegExp(`${keyword}: *#[0-9]+'`, 'g');
               return !!COMMENT_BODY.match(regex);
             });
 
