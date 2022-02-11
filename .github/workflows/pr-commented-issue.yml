@@ -104,6 +104,12 @@ jobs:
               const regex = new RegExp(`${keyword}: *#[0-9]+', 'g');
               return !!COMMENT_BODY.match(regex);
             });
+
+            if (!techDebtTagUsed) {
+              console.log('Cannot find the tag, the issue must be tagged using its number such as #123');
+              return;
+            }
+
             const regexp = new RegExp(`${keyword}: *#[0-9]+`, 'g');
             const techDebtTag = COMMENT_BODY.match(regexp)[0];
             const issueNumber = techDebtTag.match(/\#[0-9]+/g)[0].substring(1);
