@@ -63,6 +63,7 @@ jobs:
           script: |
             const { COMMENT_BODY } = process.env;
             const keywords = ['\\#tech-debt', '\\#technical-debt', '\\$tech-debt', '\\$technical-debt'];
+            console.log(COMMENT_BODY);
             for (const keyword of keywords) {
               const regex = new RegExp(`${keyword}: *\\#[0-9]+`, 'g');
               const match = regex.test(COMMENT_BODY);
