@@ -63,10 +63,13 @@ jobs:
           script: |
             const { COMMENT_BODY } = process.env;
             const keywords = ['#tech-debt', '#technical-debt', '$tech-debt', '$technical-debt'];
-            for (const keyword of keywords) {
-              if (COMMENT_BODY.includes(`${keyword}:`)) {
-                return 'true';
-              }
+            const techDebtTagUsed = keywords.find(keyword => {
+              const regex = new RegExp(`${keyword}: *#[0-9]+', 'g');
+              return !!COMMENT_BODY.match(regex);
+            });
+
+            if (!!techDebtTagUsed) {
+              return 'true';
             }
 
             console.log(`Comment body must have at least one of these keywords: ${keywords.join(', ')} to be able to tag an issue`);
@@ -104,11 +107,6 @@ jobs:
               const regex = new RegExp(`${keyword}: *#[0-9]+', 'g');
               return !!COMMENT_BODY.match(regex);
             });
-
-            if (!techDebtTagUsed) {
-              console.log('Cannot find the tag, the issue must be tagged using its number such as #123');
-              return;
-            }
 
             const regexp = new RegExp(`${keyword}: *#[0-9]+`, 'g');
             const techDebtTag = COMMENT_BODY.match(regexp)[0];
