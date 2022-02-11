@@ -9,7 +9,7 @@ on:
 jobs:
   fetch_data:
     name: Fetch data from event
-    runs-on: ubuntu-latest
+    runs-on: node@current-alpine
     outputs:
       COMMENT_BODY: ${{ steps.set-output.outputs.COMMENT_BODY }}
       OWNER: ${{ steps.set-output.outputs.OWNER }}
@@ -35,7 +35,7 @@ jobs:
 
   has_triggered:
     name: Has tag in comment body
-    runs-on: ubuntu-latest
+    runs-on: node@current-alpine
     needs: fetch_data
     outputs:
       triggered: ${{ steps.detect-trigger.outputs.result }}
@@ -58,7 +58,7 @@ jobs:
 
   fetch_issue_number:
     name: Fetch issue number from comment
-    runs-on: ubuntu-latest
+    runs-on: node@current-alpine
     needs:
       - has_triggered
       - fetch_data
@@ -105,7 +105,7 @@ jobs:
 
   create_comment:
     name: Create comment
-    runs-on: ubuntu-latest
+    runs-on: node@current-alpine
     needs:
       - fetch_data
       - fetch_issue_number
