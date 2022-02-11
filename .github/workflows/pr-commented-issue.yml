@@ -62,13 +62,10 @@ jobs:
           result-encoding: string
           script: |
             const { COMMENT_BODY } = process.env;
-            const keywords = ['\\#tech-debt', '\\#technical-debt', '\\$tech-debt', '\\$technical-debt'];
-            console.log(COMMENT_BODY);
+            const keywords = ['\#tech-debt', '\#technical-debt', '\/tech-debt', '\/technical-debt'];
             for (const keyword of keywords) {
-              const regex = new RegExp(`${keyword}: *\\#[0-9]+`, 'g');
-              const match = regex.test(COMMENT_BODY);
-              console.log(match);
-              if (match) {
+              const regex = new RegExp(`${keyword}: *\#[0-9]+`, 'g');
+              if (regex.test(COMMENT_BODY)) {
                 return 'true';
               }
             }
@@ -103,13 +100,13 @@ jobs:
           result-encoding: string
           script: |
             const { COMMENT_BODY, OWNER, REPOSITORY, PR_URL, PR_NUMBER } = process.env;
-            const keywords = ['\\#tech-debt', '\\#technical-debt', '\\$tech-debt', '\\$technical-debt'];
+            const keywords = ['\#tech-debt', '\#technical-debt', '\/tech-debt', '\/technical-debt'];
             const techDebtTagUsed = keywords.find(keyword => {
-              const regex = new RegExp(`${keyword}: *#[0-9]+'`, 'g');
-              return !!COMMENT_BODY.match(regex);
+              const regex = new RegExp(`${keyword}: *\#[0-9]+`, 'g');
+              return regex.test(COMMENT_BODY);
             });
 
-            const regexp = new RegExp(`${keyword}: *#[0-9]+`, 'g');
+            const regexp = new RegExp(`${keyword}: *\#[0-9]+`, 'g');
             const techDebtTag = COMMENT_BODY.match(regexp)[0];
             const issueNumber = techDebtTag.match(/\#[0-9]+/g)[0].substring(1);
             const issue = await github.rest.issues.get({
